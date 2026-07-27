@@ -1,0 +1,395 @@
+/* =====================================================================
+   TRANSICIÓN 2026 — style.css
+   Todos los colores, tipografías y velocidades de animación se controlan
+   con variables CSS. Estas variables son sobrescritas en tiempo real por
+   script.js a partir de config.json, así que basta editar config.json
+   para re-personalizar toda la página sin tocar este archivo.
+   ===================================================================== */
+
+:root {
+  /* ---- Paleta (valores por defecto; config.json puede sobrescribirlos) ---- */
+  --azul-oscuro: #0a1128;
+  --azul-profundo: #111c3e;
+  --dorado: #d4af6a;
+  --dorado-claro: #f3d9a4;
+  --dorado-oscuro: #9c7a3c;
+  --blanco-hueso: #f7f3ea;
+  --texto-claro: #f5ecd9;
+  --sombra: rgba(0, 0, 0, 0.55);
+  --brillo-escudo: rgba(255, 235, 190, 0.55);
+
+  /* ---- Tipografía ---- */
+  --fuente-titulo: 'Cinzel Decorative', 'Cinzel', serif;
+  --fuente-cuerpo: 'Cinzel', 'Playfair Display', serif;
+  --fuente-cursiva: 'Alex Brush', cursive;
+
+  /* ---- Velocidades de animación (multiplicador; 1 = normal) ---- */
+  --vel-globos: 1;
+  --vel-cortinas: 1;
+  --vel-particulas: 1;
+  --vel-pulso: 1;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: var(--azul-oscuro);
+  font-family: var(--fuente-cuerpo);
+  overflow-x: hidden;
+}
+
+body { -webkit-font-smoothing: antialiased; }
+
+/* ===================== ESCENARIO GENERAL ===================== */
+.stage {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 20%, var(--azul-profundo) 0%, var(--azul-oscuro) 70%);
+  padding: 12px;
+  overflow: hidden;
+}
+
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===================== MARCO PÓSTER (misma proporción que el diseño) ===================== */
+.poster-frame {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 853 / 1280;
+  margin: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 25px 70px var(--sombra), 0 0 0 1px rgba(212, 175, 106, 0.25);
+  z-index: 2;
+  transform-origin: center;
+  animation: curtain-sway calc(9s / var(--vel-cortinas)) ease-in-out infinite;
+}
+
+@keyframes curtain-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(0.15deg); }
+}
+
+.bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ===================== GLOBOS FLOTANTES ===================== */
+.balloon {
+  position: absolute;
+  width: 12%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0; /* invisible — el globo real ya está pintado en la imagen de fondo;
+                 estas capas solo aportan el leve movimiento de "brillo" flotante */
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), transparent 60%);
+  animation: balloon-float calc(6s / var(--vel-globos)) ease-in-out infinite;
+}
+.balloon--left    { top: 5%;  left: 2%;  animation-delay: 0s; }
+.balloon--right-1 { top: 4%;  right: 3%; animation-delay: .8s; width: 11%; }
+.balloon--right-2 { top: 14%; right: 1%; animation-delay: 1.6s; width: 9%; }
+
+@keyframes balloon-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.18; }
+  50% { transform: translateY(-3.5%) rotate(1.5deg); opacity: 0.32; }
+}
+
+/* ===================== BRILLO PULSANTE DETRÁS DEL ESCUDO ===================== */
+.shield-glow {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  width: 46%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--brillo-escudo) 0%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: shield-pulse calc(4.5s / var(--vel-pulso)) ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes shield-pulse {
+  0%, 100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.7; transform: translateX(-50%) scale(1.08); }
+}
+
+/* ===================== PANEL DE CUENTA REGRESIVA ===================== */
+.countdown-panel {
+  position: absolute;
+  top: 39.4%;
+  left: 7.6%;
+  width: 84.8%;
+  height: 17.6%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0d1730 0%, #050a18 100%);
+  border: 2px solid var(--dorado);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 25px rgba(0,0,0,0.8),
+    0 0 0 4px rgba(212,175,106,0.15),
+    0 8px 25px rgba(0,0,0,0.6);
+  color: var(--texto-claro);
+  padding: 2% 1%;
+}
+
+.countdown-labels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  text-align: center;
+  font-family: var(--fuente-cuerpo);
+  letter-spacing: 0.12em;
+  color: var(--dorado-claro);
+  font-size: clamp(8px, 2.6vw, 14px);
+  margin-bottom: 2%;
+  text-transform: uppercase;
+}
+
+.countdown-numbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2px, 1.2vw, 8px);
+  font-family: var(--fuente-cuerpo);
+  font-weight: 700;
+  font-size: clamp(20px, 8.5vw, 46px);
+  color: var(--blanco-hueso);
+  text-shadow: 0 0 12px rgba(212,175,106,0.5), 0 2px 4px rgba(0,0,0,0.8);
+  line-height: 1;
+  width: 100%;
+}
+.countdown-numbers span:not(.sep) {
+  min-width: 2.1ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.countdown-numbers .sep {
+  color: var(--dorado);
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+/* Sutil parpadeo del separador para dar sensación de "tick" */
+.countdown-numbers .sep { animation: tick-blink 1s steps(1) infinite; }
+@keyframes tick-blink { 0%, 49% { opacity: 0.85; } 50%, 100% { opacity: 0.25; } }
+
+/* ===================== CELEBRACIÓN FINAL ===================== */
+.celebration {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(10,17,40,0.55) 0%, rgba(5,9,20,0.92) 80%);
+  backdrop-filter: blur(2px);
+  z-index: 5;
+  animation: celebration-in 1.2s ease forwards;
+}
+@keyframes celebration-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.celebration-content { padding: 6%; }
+.celebration-message {
+  font-family: var(--fuente-titulo);
+  color: var(--dorado-claro);
+  font-size: clamp(18px, 6vw, 32px);
+  line-height: 1.4;
+  text-shadow: 0 0 22px rgba(243,217,164,0.7);
+  animation: celebration-pop 1.8s ease infinite alternate;
+}
+@keyframes celebration-pop {
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
+}
+
+/* ===================== CONTROLES FLOTANTES ===================== */
+.controls {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 20;
+}
+
+.ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,106,0.5);
+  background: rgba(10, 17, 40, 0.75);
+  color: var(--dorado-claro);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+.ctrl-btn:hover { transform: translateY(-2px); background: rgba(17,28,62,0.9); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+.ctrl-btn--active { color: var(--dorado); box-shadow: 0 0 0 2px rgba(212,175,106,0.4); }
+
+.music-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10,17,40,0.6);
+  border: 1px solid rgba(212,175,106,0.3);
+  border-radius: 30px;
+  padding: 4px 10px 4px 4px;
+  backdrop-filter: blur(6px);
+}
+#volume-slider {
+  width: 70px;
+  accent-color: var(--dorado);
+  cursor: pointer;
+}
+
+.share-panel { position: relative; }
+.share-menu {
+  position: absolute;
+  bottom: 52px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+  background: rgba(8,13,30,0.95);
+  border: 1px solid rgba(212,175,106,0.35);
+  border-radius: 12px;
+  padding: 8px;
+  gap: 4px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+.share-menu a, .share-menu button {
+  display: block;
+  padding: 8px 10px;
+  color: var(--texto-claro);
+  text-decoration: none;
+  font-family: var(--fuente-cuerpo);
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+.share-menu a:hover, .share-menu button:hover { background: rgba(212,175,106,0.15); color: var(--dorado-claro); }
+
+.install-btn {
+  width: auto;
+  padding: 0 14px;
+  border-radius: 24px;
+  font-family: var(--fuente-cuerpo);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  gap: 6px;
+}
+
+/* QR Modal */
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,6,15,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.qr-modal-content {
+  background: var(--azul-profundo);
+  border: 1px solid var(--dorado);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  color: var(--texto-claro);
+  position: relative;
+}
+.qr-close {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--dorado-claro);
+  font-size: 22px;
+  cursor: pointer;
+}
+#qr-code img { border-radius: 8px; }
+
+/* Botón de activación de audio (política de autoplay) */
+.tap-hint {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  background: rgba(10,17,40,0.85);
+  border: 1px solid var(--dorado);
+  color: var(--dorado-claro);
+  font-family: var(--fuente-cuerpo);
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+.tap-hint[hidden] { display: none; }
+@keyframes hint-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,106,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(212,175,106,0); }
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (min-width: 900px) {
+  .poster-frame { max-width: 560px; }
+}
+@media (min-width: 1400px) {
+  .poster-frame { max-width: 620px; }
+}
+@media (max-width: 380px) {
+  .controls { bottom: 70px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .poster-frame { max-width: 340px; }
+}
+
+/* Respeta preferencia de reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .poster-frame, .balloon, .shield-glow, .celebration-message, .tap-hint {
+    animation: none !important;
+  }
+}

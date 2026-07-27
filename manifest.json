@@ -1,0 +1,25 @@
+{
+  "name": "Transición 2026 - Gimnasio Moderno Montecatini",
+  "short_name": "Transición 2026",
+  "description": "Cuenta regresiva para la graduación de Transición 2026",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#0a1128",
+  "theme_color": "#0a1128",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

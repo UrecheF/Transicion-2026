@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <!-- ============ SEO / META ============ -->
+  <title>Transición 2026 | Gimnasio Moderno Montecatini</title>
+  <meta name="description" content="Cuenta regresiva oficial para la ceremonia de graduación de Transición 2026, Gimnasio Moderno Montecatini, Magangué - Bolívar." />
+  <meta name="keywords" content="graduación, transición 2026, gimnasio moderno montecatini, magangué, bolívar, cuenta regresiva" />
+  <meta name="author" content="Gimnasio Moderno Montecatini" />
+  <meta name="theme-color" content="#0a1128" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Transición 2026 | Gimnasio Moderno Montecatini" />
+  <meta property="og:description" content="Cuenta regresiva oficial para la graduación de Transición 2026 - Sábado 28 de noviembre de 2026." />
+  <meta property="og:image" content="assets/images/logo-crop.png" />
+  <meta property="og:locale" content="es_CO" />
+  <meta id="og-url" property="og:url" content="" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Transición 2026 | Gimnasio Moderno Montecatini" />
+  <meta name="twitter:description" content="Cuenta regresiva oficial para la graduación de Transición 2026." />
+  <meta name="twitter:image" content="assets/images/logo-crop.png" />
+
+  <!-- Favicon / PWA -->
+  <link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Preload critical assets -->
+  <link rel="preload" as="image" href="assets/images/bg-full.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cinzel+Decorative:wght@700&family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Alex+Brush&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ FONDO / CORTINAS / PARTÍCULAS ============ -->
+  <div class="stage" id="stage">
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <div class="poster-frame" id="poster-frame">
+      <img class="bg-image" id="bg-image" src="assets/images/bg-full.jpg" alt="Diseño de graduación Transición 2026" />
+
+      <!-- Balloons (animated, layered above bg for subtle float) -->
+      <div class="balloon balloon--left" aria-hidden="true"></div>
+      <div class="balloon balloon--right-1" aria-hidden="true"></div>
+      <div class="balloon balloon--right-2" aria-hidden="true"></div>
+
+      <!-- Glow pulse behind shield -->
+      <div class="shield-glow" aria-hidden="true"></div>
+
+      <!-- Countdown overlay, positioned to match the original ornate frame -->
+      <section class="countdown-panel" id="countdown-panel" aria-live="polite">
+        <div class="countdown-labels">
+          <span>DÍAS</span><span>HORAS</span><span>MINUTOS</span><span>SEGUNDOS</span>
+        </div>
+        <div class="countdown-numbers" id="countdown-numbers">
+          <span id="cd-days">00</span><span class="sep">:</span>
+          <span id="cd-hours">00</span><span class="sep">:</span>
+          <span id="cd-minutes">00</span><span class="sep">:</span>
+          <span id="cd-seconds">00</span>
+        </div>
+      </section>
+
+      <!-- Celebration overlay, hidden until countdown reaches zero -->
+      <section class="celebration" id="celebration" hidden>
+        <div class="celebration-content">
+          <p class="celebration-message" id="celebration-message"></p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============ CONTROLES FLOTANTES ============ -->
+  <div class="controls" role="toolbar" aria-label="Controles">
+
+    <!-- Reproductor de música -->
+    <div class="music-player" id="music-player">
+      <button id="music-toggle" class="ctrl-btn" aria-label="Reproducir música" title="Reproducir / Pausar">
+        <svg id="icon-play" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+        <svg id="icon-pause" viewBox="0 0 24 24" width="20" height="20" hidden><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" aria-label="Volumen" />
+      <button id="loop-toggle" class="ctrl-btn ctrl-btn--active" aria-label="Repetir" title="Repetir">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+      </button>
+      <audio id="bg-audio" loop preload="none">
+        <source src="assets/audio/musica-fondo.mp3" type="audio/mpeg" />
+      </audio>
+    </div>
+
+    <!-- Compartir -->
+    <div class="share-panel">
+      <button id="share-toggle" class="ctrl-btn" aria-label="Compartir" title="Compartir">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 1 0-3-3c0 .24.04.47.09.7L7.04 9.81A2.99 2.99 0 0 0 2 12a3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 1 0 5.92-.92 2.92 2.92 0 0 0-2-2.92z"/></svg>
+      </button>
+      <div class="share-menu" id="share-menu" hidden>
+        <a id="share-whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+        <a id="share-facebook" target="_blank" rel="noopener">Facebook</a>
+        <a id="share-instagram" target="_blank" rel="noopener">Instagram</a>
+        <a id="share-telegram" target="_blank" rel="noopener">Telegram</a>
+        <a id="share-x" target="_blank" rel="noopener">X</a>
+        <a id="share-email" rel="noopener">Correo</a>
+        <button id="share-copy" type="button">Copiar enlace</button>
+        <button id="share-qr" type="button">Código QR</button>
+      </div>
+    </div>
+
+    <!-- Instalar como app -->
+    <button id="install-btn" class="ctrl-btn install-btn" hidden title="Instalar aplicación">
+      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6zM11 17a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" style="display:none"/><path fill="currentColor" d="M5 20h14v-2H5v2zm7-16-5 5h3v6h4v-6h3l-5-5z"/></svg>
+      Instalar
+    </button>
+  </div>
+
+  <!-- QR modal -->
+  <div class="qr-modal" id="qr-modal" hidden>
+    <div class="qr-modal-content">
+      <button id="qr-close" class="qr-close" aria-label="Cerrar">&times;</button>
+      <div id="qr-code"></div>
+      <p>Escanea para compartir</p>
+    </div>
+  </div>
+
+  <!-- Aviso de interacción para activar audio -->
+  <button class="tap-hint" id="tap-hint" type="button">Toca para activar la música 🎶</button>
+
+  <script src="script.js" defer></script>
+  <!-- Service worker registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

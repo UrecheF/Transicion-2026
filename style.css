@@ -320,35 +320,7 @@ body { -webkit-font-smoothing: antialiased; }
 }
 
 /* QR Modal */
-.qr-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(3,6,15,0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-}
-.qr-modal-content {
-  background: var(--azul-profundo);
-  border: 1px solid var(--dorado);
-  border-radius: 14px;
-  padding: 24px;
-  text-align: center;
-  color: var(--texto-claro);
-  position: relative;
-}
-.qr-close {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: var(--dorado-claro);
-  font-size: 22px;
-  cursor: pointer;
-}
-#qr-code img { border-radius: 8px; }
+
 
 /* Botón de activación de audio (política de autoplay) */
 .tap-hint {

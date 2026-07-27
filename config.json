@@ -10,8 +10,14 @@
     "lema": "Pequeños Pasos Hoy, Grandes Sueños Mañana",
     "fraseFinal": "Hoy aprendemos, mañana transformamos el mundo.",
     "mensajeCelebracion": "¡Llegó el gran día! Felicidades Transición 2026 🎓✨",
-    "valores": ["DISCIPLINA", "VALORES", "SUEÑOS", "FUTURO"]
+    "valores": [
+      "DISCIPLINA",
+      "VALORES",
+      "SUEÑOS",
+      "FUTURO"
+    ]
   },
+
   "colores": {
     "azulOscuro": "#0a1128",
     "azulProfundo": "#111c3e",
@@ -21,34 +27,43 @@
     "blancoHueso": "#f7f3ea",
     "textoClaro": "#f5ecd9",
     "sombra": "rgba(0,0,0,0.55)",
-    "brilloEscudo": "rgba(255, 235, 190, 0.55)"
+    "brilloEscudo": "rgba(255,235,190,0.55)"
   },
+
   "animaciones": {
-    "velocidadGlobos": 1,
-    "velocidadCortinas": 1,
-    "velocidadParticulas": 1,
-    "pulsoEscudo": 1,
-    "movimientoLaureles": 1
+    "velocidadGlobos": 2,
+    "velocidadCortinas": 2,
+    "velocidadParticulas": 3,
+    "pulsoEscudo": 2,
+    "movimientoLaureles": 2
   },
+
   "imagenes": {
     "fondo": "assets/images/bg-full.jpg",
     "logo": "assets/images/logo-crop.png",
     "favicon": "assets/icons/icon-192.png",
     "ogImage": "assets/images/logo-crop.png"
   },
+
   "musica": {
     "archivo": "assets/audio/musica-fondo.mp3",
-    "volumenInicial": 0.5,
+    "volumenInicial": 0.7,
     "repetir": true,
     "autoplayTrasInteraccion": true
   },
+
   "compartir": {
-    "url": "https://urechef.github.io/Transicion-2026/"
+    "url": "https://urechef.github.io/Transicion-2026/",
     "titulo": "Transición 2026 · Gimnasio Moderno Montecatini",
     "descripcion": "Cuenta regresiva para la graduación de Transición 2026 - Sábado 28 de noviembre de 2026"
   },
+
   "seo": {
     "titulo": "Transición 2026 | Gimnasio Moderno Montecatini",
+    "descripcion": "Cuenta regresiva oficial para la ceremonia de graduación de Transición 2026, Gimnasio Moderno Montecatini, Magangué - Bolívar.",
+    "palabrasClave": "graduación, transición 2026, gimnasio moderno montecatini, magangué, bolívar, cuenta regresiva"
+  }
+}
     "descripcion": "Cuenta regresiva oficial para la ceremonia de graduación de Transición 2026, Gimnasio Moderno Montecatini, Magangué - Bolívar.",
     "palabrasClave": "graduación, transición 2026, gimnasio moderno montecatini, magangué, bolívar, cuenta regresiva"
   }

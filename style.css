@@ -216,7 +216,7 @@ body { -webkit-font-smoothing: antialiased; }
 }
 @keyframes celebration-in {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to { opacity: 10000; }
 }
 .celebration-content { padding: 6%; }
 .celebration-message {

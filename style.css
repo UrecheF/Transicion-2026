@@ -233,6 +233,7 @@ body { -webkit-font-smoothing: antialiased; }
 }
 
 /* ===================== CONTROLES FLOTANTES ===================== */
+
 .controls {
   position: fixed;
   bottom: 16px;
@@ -242,6 +243,25 @@ body { -webkit-font-smoothing: antialiased; }
   align-items: flex-end;
   gap: 10px;
   z-index: 20;
+
+  /* Ocultos al iniciar */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(25px);
+
+  transition:
+    opacity .8s ease,
+    transform .8s ease,
+    visibility .8s ease;
+}
+
+/* Se mostrarán cuando script.js agregue la clase show */
+.controls.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .ctrl-btn {
@@ -253,70 +273,90 @@ body { -webkit-font-smoothing: antialiased; }
   height: 42px;
   border-radius: 50%;
   border: 1px solid rgba(212,175,106,0.5);
-  background: rgba(10, 17, 40, 0.75);
+  background: rgba(10,17,40,0.75);
   color: var(--dorado-claro);
   cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-}
-.ctrl-btn:hover { transform: translateY(-2px); background: rgba(17,28,62,0.9); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
-.ctrl-btn--active { color: var(--dorado); box-shadow: 0 0 0 2px rgba(212,175,106,0.4); }
-
-.music-player {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(10,17,40,0.6);
-  border: 1px solid rgba(212,175,106,0.3);
-  border-radius: 30px;
-  padding: 4px 10px 4px 4px;
-  backdrop-filter: blur(6px);
-}
-#volume-slider {
-  width: 70px;
-  accent-color: var(--dorado);
-  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all .25s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
 }
 
-.share-panel { position: relative; }
-.share-menu {
-  position: absolute;
-  bottom: 52px;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 170px;
-  background: rgba(8,13,30,0.95);
-  border: 1px solid rgba(212,175,106,0.35);
-  border-radius: 12px;
-  padding: 8px;
-  gap: 4px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+.ctrl-btn:hover{
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(17,28,62,.92);
+  box-shadow: 0 6px 18px rgba(0,0,0,.5);
 }
-.share-menu a, .share-menu button {
-  display: block;
-  padding: 8px 10px;
-  color: var(--texto-claro);
-  text-decoration: none;
-  font-family: var(--fuente-cuerpo);
-  font-size: 13px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  text-align: left;
-  cursor: pointer;
-}
-.share-menu a:hover, .share-menu button:hover { background: rgba(212,175,106,0.15); color: var(--dorado-claro); }
 
-.install-btn {
-  width: auto;
-  padding: 0 14px;
-  border-radius: 24px;
-  font-family: var(--fuente-cuerpo);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  gap: 6px;
+.ctrl-btn--active{
+  color: var(--dorado);
+  box-shadow: 0 0 0 2px rgba(212,175,106,.4);
+}
+
+.music-player{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(10,17,40,.60);
+  border:1px solid rgba(212,175,106,.30);
+  border-radius:30px;
+  padding:4px 10px 4px 4px;
+  backdrop-filter:blur(8px);
+}
+
+#volume-slider{
+  width:70px;
+  accent-color:var(--dorado);
+  cursor:pointer;
+}
+
+.share-panel{
+  position:relative;
+}
+
+.share-menu{
+  position:absolute;
+  bottom:52px;
+  right:0;
+  display:flex;
+  flex-direction:column;
+  min-width:170px;
+  background:rgba(8,13,30,.96);
+  border:1px solid rgba(212,175,106,.35);
+  border-radius:12px;
+  padding:8px;
+  gap:4px;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+}
+
+.share-menu a,
+.share-menu button{
+  display:block;
+  padding:8px 10px;
+  color:var(--texto-claro);
+  text-decoration:none;
+  font-family:var(--fuente-cuerpo);
+  font-size:13px;
+  background:transparent;
+  border:none;
+  border-radius:8px;
+  text-align:left;
+  cursor:pointer;
+}
+
+.share-menu a:hover,
+.share-menu button:hover{
+  background:rgba(212,175,106,.15);
+  color:var(--dorado-claro);
+}
+
+.install-btn{
+  width:auto;
+  padding:0 14px;
+  border-radius:24px;
+  font-family:var(--fuente-cuerpo);
+  font-size:12px;
+  letter-spacing:.05em;
+  gap:6px;
 }
 
 /* QR Modal */

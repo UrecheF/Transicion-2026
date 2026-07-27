@@ -212,50 +212,127 @@
     });
   }
 
-  /* ---------------------------------------------------------------- */
-  /* 4. REPRODUCTOR DE MÚSICA                                          */
-  /* ---------------------------------------------------------------- */
-  function setupMusic() {
-    const audio = document.getElementById('bg-audio');
-    const toggleBtn = document.getElementById('music-toggle');
-    const iconPlay = document.getElementById('icon-play');
-    const iconPause = document.getElementById('icon-pause');
-    const volumeSlider = document.getElementById('volume-slider');
-    const loopBtn = document.getElementById('loop-toggle');
-    const tapHint = document.getElementById('tap-hint');
+/* ---------------------------------------------------------------- */
+/* 4. REPRODUCTOR DE MÚSICA                                          */
+/* ---------------------------------------------------------------- */
+function setupMusic() {
 
-    const musicConf = CONFIG?.musica || {};
-    if (musicConf.archivo) audio.querySelector('source').src = musicConf.archivo;
-    audio.load();
-    audio.volume = musicConf.volumenInicial ?? 0.5;
-    audio.loop = musicConf.repetir !== false;
-    volumeSlider.value = audio.volume;
+  const audio = document.getElementById('bg-audio');
+  const toggleBtn = document.getElementById('music-toggle');
+  const iconPlay = document.getElementById('icon-play');
+  const iconPause = document.getElementById('icon-pause');
+  const volumeSlider = document.getElementById('volume-slider');
+  const loopBtn = document.getElementById('loop-toggle');
+  const tapHint = document.getElementById('tap-hint');
+  const controls = document.querySelector('.controls');
 
-    function updateIcons() {
-      const playing = !audio.paused;
-      iconPlay.hidden = playing;
-      iconPause.hidden = !playing;
-      toggleBtn.setAttribute('aria-label', playing ? 'Pausar música' : 'Reproducir música');
-    }
+  // Ocultar controles al iniciar
+  if (controls) {
+    controls.classList.remove('show');
+  }
 
-    function playAudio() {
-      audio.play().then(updateIcons).catch(() => { /* el navegador bloqueó el autoplay */ });
-    }
+  const musicConf = CONFIG?.musica || {};
 
-    toggleBtn.addEventListener('click', () => {
-      if (audio.paused) playAudio(); else audio.pause();
+  if (musicConf.archivo) {
+    audio.querySelector('source').src = musicConf.archivo;
+  }
+
+  audio.load();
+  audio.volume = musicConf.volumenInicial ?? 0.5;
+  audio.loop = musicConf.repetir !== false;
+  volumeSlider.value = audio.volume;
+
+  function updateIcons() {
+    const playing = !audio.paused;
+    iconPlay.hidden = playing;
+    iconPause.hidden = !playing;
+    toggleBtn.setAttribute(
+      'aria-label',
+      playing ? 'Pausar música' : 'Reproducir música'
+    );
+  }
+
+  function playAudio() {
+
+    audio.play().then(() => {
+
       updateIcons();
+
+      // Mostrar controles
+      if (controls) {
+        controls.classList.add('show');
+      }
+
+    }).catch(() => {});
+
+  }
+
+  toggleBtn.addEventListener('click', () => {
+
+    if (audio.paused) {
+
+      playAudio();
+
+    } else {
+
+      audio.pause();
+      updateIcons();
+
+    }
+
+    tapHint.hidden = true;
+
+  });
+
+  volumeSlider.addEventListener('input', (e) => {
+    audio.volume = parseFloat(e.target.value);
+  });
+
+  loopBtn.addEventListener('click', () => {
+    audio.loop = !audio.loop;
+    loopBtn.classList.toggle('ctrl-btn--active', audio.loop);
+  });
+
+  // Iniciar música al primer toque
+  if (musicConf.autoplayTrasInteraccion !== false) {
+
+    const startOnce = () => {
+
+      playAudio();
+
       tapHint.hidden = true;
+
+      if (controls) {
+        controls.classList.add('show');
+      }
+
+      document.removeEventListener('click', startOnce);
+      document.removeEventListener('touchstart', startOnce);
+
+    };
+
+    tapHint.addEventListener('click', startOnce);
+
+    document.addEventListener('click', startOnce, {
+      once: true
     });
 
-    volumeSlider.addEventListener('input', (e) => {
-      audio.volume = parseFloat(e.target.value);
+    document.addEventListener('touchstart', startOnce, {
+      once: true,
+      passive: true
     });
 
-    loopBtn.addEventListener('click', () => {
-      audio.loop = !audio.loop;
-      loopBtn.classList.toggle('ctrl-btn--active', audio.loop);
-    });
+  } else {
+
+    tapHint.hidden = true;
+
+    if (controls) {
+      controls.classList.add('show');
+    }
+
+  }
+
+}
 
     // Cumplimiento de políticas de autoplay: iniciar solo tras interacción
     if (musicConf.autoplayTrasInteraccion !== false) {

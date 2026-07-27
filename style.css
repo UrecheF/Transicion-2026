@@ -24,10 +24,10 @@
   --fuente-cursiva: 'Alex Brush', cursive;
 
   /* ---- Velocidades de animación (multiplicador; 1 = normal) ---- */
-  --vel-globos: 1;
-  --vel-cortinas: 1;
-  --vel-particulas: 1;
-  --vel-pulso: 1;
+  --vel-globos: 3;
+  --vel-cortinas: 3;
+  --vel-particulas: 4;
+  --vel-pulso: 3;
 }
 
 * { box-sizing: border-box; }

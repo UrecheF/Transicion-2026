@@ -308,8 +308,6 @@
       }
     });
 
-    document.getElementById('share-qr').addEventListener('click', () => openQrModal(url));
-
     // Web Share API nativa en móviles, si está disponible, mediante el mismo botón principal (long usage keeps menu too)
     if (navigator.share) {
       shareToggle.addEventListener('dblclick', () => {
@@ -323,31 +321,6 @@
     btn.textContent = text;
     setTimeout(() => { btn.textContent = original; }, 1800);
   }
-
-  function openQrModal(url) {
-    const modal = document.getElementById('qr-modal');
-    const qrContainer = document.getElementById('qr-code');
-    qrContainer.innerHTML = '';
-    modal.hidden = false;
-
-    const render = () => {
-      // eslint-disable-next-line no-undef
-      new QRCode(qrContainer, { text: url, width: 200, height: 200, colorDark: '#0a1128', colorLight: '#f7f3ea' });
-    };
-
-    if (window.QRCode) {
-      render();
-    } else {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-      script.onload = render;
-      document.body.appendChild(script);
-    }
-  }
-
-  document.getElementById('qr-close')?.addEventListener('click', () => {
-    document.getElementById('qr-modal').hidden = true;
-  });
 
   /* ---------------------------------------------------------------- */
   /* 6. INSTALACIÓN COMO APP (PWA)                                      */

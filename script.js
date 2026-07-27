@@ -334,21 +334,7 @@ function setupMusic() {
 
 }
 
-    // Cumplimiento de políticas de autoplay: iniciar solo tras interacción
-    if (musicConf.autoplayTrasInteraccion !== false) {
-      const startOnce = () => {
-        playAudio();
-        tapHint.hidden = true;
-        document.removeEventListener('click', startOnce);
-        document.removeEventListener('touchstart', startOnce);
-      };
-      tapHint.addEventListener('click', startOnce);
-      document.addEventListener('click', startOnce, { once: true });
-      document.addEventListener('touchstart', startOnce, { once: true, passive: true });
-    } else {
-      tapHint.hidden = true;
-    }
-  }
+    
 
   /* ---------------------------------------------------------------- */
   /* 5. COMPARTIR                                                       */

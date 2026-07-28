@@ -213,7 +213,54 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 4. REPRODUCTOR DE MÚSICA                                          */
+  /* 4. NOMBRES DE LOS ESTUDIANTES FLOTANDO DESDE EL LIBRO              */
+  /* ---------------------------------------------------------------- */
+  function setupFloatingNames() {
+    const layer = document.getElementById('names-layer');
+    const conf = CONFIG?.estudiantes;
+    if (!layer || !conf || conf.activo === false) return;
+
+    const nombres = (conf.nombres || []).filter(Boolean);
+    if (nombres.length === 0) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    const speed = CONFIG?.animaciones?.velocidadNombres || 1;
+    const intervalMs = (conf.intervaloSegundos || 3.5) * 1000 / speed;
+
+    let i = 0;
+    // Baraja el orden una vez para que no salgan siempre en la misma secuencia
+    const orden = [...nombres].sort(() => Math.random() - 0.5);
+
+    function spawnName() {
+      const nombre = orden[i % orden.length];
+      i++;
+
+      const span = document.createElement('span');
+      span.className = 'floating-name';
+      span.textContent = nombre;
+
+      const duration = (7 + Math.random() * 2.5) / speed; // 7-9.5s, ajustable
+      const driftStart = (Math.random() - 0.5) * 40; // leve vaivén horizontal, en px
+      const driftEnd = driftStart + (Math.random() - 0.5) * 60;
+      const leftOffset = (Math.random() - 0.5) * 50; // distintos puntos de salida sobre el libro
+
+      span.style.left = `calc(50% + ${leftOffset}px)`;
+      span.style.setProperty('--drift-start', `${driftStart}px`);
+      span.style.setProperty('--drift-end', `${driftEnd}px`);
+      span.style.animationDuration = `${duration}s`;
+
+      span.addEventListener('animationend', () => span.remove());
+      layer.appendChild(span);
+    }
+
+    spawnName();
+    setInterval(spawnName, intervalMs);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* 5. REPRODUCTOR DE MÚSICA                                          */
   /* ---------------------------------------------------------------- */
   function setupMusic() {
     const audio = document.getElementById('bg-audio');
@@ -274,7 +321,7 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 5. COMPARTIR                                                       */
+  /* 6. COMPARTIR                                                       */
   /* ---------------------------------------------------------------- */
   function setupShare() {
     const shareToggle = document.getElementById('share-toggle');
@@ -350,7 +397,7 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 6. INSTALACIÓN COMO APP (PWA)                                      */
+  /* 7. INSTALACIÓN COMO APP (PWA)                                      */
   /* ---------------------------------------------------------------- */
   function setupInstall() {
     const installBtn = document.getElementById('install-btn');
@@ -374,7 +421,7 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 7. TEXTOS DINÁMICOS DESDE CONFIG (título/lema si se editan)       */
+  /* 8. TEXTOS DINÁMICOS DESDE CONFIG (título/lema si se editan)       */
   /* ---------------------------------------------------------------- */
   function applyTextContent() {
     if (!CONFIG?.evento) return;
@@ -393,6 +440,7 @@
     applyImagesAndMeta();
     applyTextContent();
     initParticles();
+    setupFloatingNames();
     startCountdown();
     setupMusic();
     setupShare();

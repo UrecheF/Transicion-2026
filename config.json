@@ -12,6 +12,18 @@
     "mensajeCelebracion": "¡Llegó el gran día! Felicidades Transición 2026 🎓✨",
     "valores": ["DISCIPLINA", "VALORES", "SUEÑOS", "FUTURO"]
   },
+  "estudiantes": {
+    "activo": true,
+    "nombres": [
+      "María José",
+      "Juan Pablo",
+      "Sofía",
+      "Samuel",
+      "Isabella",
+      "Mateo"
+    ],
+    "intervaloSegundos": 3.5
+  },
   "colores": {
     "azulOscuro": "#0a1128",
     "azulProfundo": "#111c3e",
@@ -28,7 +40,8 @@
     "velocidadCortinas": 1,
     "velocidadParticulas": 1,
     "pulsoEscudo": 1,
-    "movimientoLaureles": 1
+    "movimientoLaureles": 1,
+    "velocidadNombres": 1
   },
   "imagenes": {
     "fondo": "assets/images/bg-full.jpg",

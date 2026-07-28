@@ -2,7 +2,11 @@
    Cachea el "app shell" para que la página cargue instantáneamente
    y funcione, en gran parte, sin conexión. */
 
-const CACHE_NAME = 'transicion-2026-v1';
+const CACHE_NAME = 'transicion-2026-v2';
+// Solo el "app shell" que siempre existe. El audio y otros archivos opcionales
+// NO van aquí: cache.addAll() falla en bloque si un solo recurso da 404, lo
+// que dejaba la app completa sin caché offline si aún no se había subido la
+// música. Esos recursos opcionales se cachean solos en el fetch handler.
 const ASSETS = [
   './',
   './index.html',
@@ -18,7 +22,9 @@ const ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(() => {})
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.all(ASSETS.map((url) => cache.add(url).catch(() => {})))
+    )
   );
   self.skipWaiting();
 });

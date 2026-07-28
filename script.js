@@ -212,129 +212,66 @@
     });
   }
 
-/* ---------------------------------------------------------------- */
-/* 4. REPRODUCTOR DE MÚSICA                                          */
-/* ---------------------------------------------------------------- */
-function setupMusic() {
+  /* ---------------------------------------------------------------- */
+  /* 4. REPRODUCTOR DE MÚSICA                                          */
+  /* ---------------------------------------------------------------- */
+  function setupMusic() {
+    const audio = document.getElementById('bg-audio');
+    const toggleBtn = document.getElementById('music-toggle');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+    const volumeSlider = document.getElementById('volume-slider');
+    const loopBtn = document.getElementById('loop-toggle');
+    const tapHint = document.getElementById('tap-hint');
 
-  const audio = document.getElementById('bg-audio');
-  const toggleBtn = document.getElementById('music-toggle');
-  const iconPlay = document.getElementById('icon-play');
-  const iconPause = document.getElementById('icon-pause');
-  const volumeSlider = document.getElementById('volume-slider');
-  const loopBtn = document.getElementById('loop-toggle');
-  const tapHint = document.getElementById('tap-hint');
-  const controls = document.querySelector('.controls');
+    const musicConf = CONFIG?.musica || {};
+    if (musicConf.archivo) audio.querySelector('source').src = musicConf.archivo;
+    audio.load();
+    audio.volume = musicConf.volumenInicial ?? 0.5;
+    audio.loop = musicConf.repetir !== false;
+    volumeSlider.value = audio.volume;
 
-  // Ocultar controles al iniciar
-  if (controls) {
-    controls.classList.remove('show');
-  }
-
-  const musicConf = CONFIG?.musica || {};
-
-  if (musicConf.archivo) {
-    audio.querySelector('source').src = musicConf.archivo;
-  }
-
-  audio.load();
-  audio.volume = musicConf.volumenInicial ?? 0.5;
-  audio.loop = musicConf.repetir !== false;
-  volumeSlider.value = audio.volume;
-
-  function updateIcons() {
-    const playing = !audio.paused;
-    iconPlay.hidden = playing;
-    iconPause.hidden = !playing;
-    toggleBtn.setAttribute(
-      'aria-label',
-      playing ? 'Pausar música' : 'Reproducir música'
-    );
-  }
-
-  function playAudio() {
-
-    audio.play().then(() => {
-
-      updateIcons();
-
-      // Mostrar controles
-      if (controls) {
-        controls.classList.add('show');
-      }
-
-    }).catch(() => {});
-
-  }
-
-  toggleBtn.addEventListener('click', () => {
-
-    if (audio.paused) {
-
-      playAudio();
-
-    } else {
-
-      audio.pause();
-      updateIcons();
-
+    function updateIcons() {
+      const playing = !audio.paused;
+      iconPlay.hidden = playing;
+      iconPause.hidden = !playing;
+      toggleBtn.setAttribute('aria-label', playing ? 'Pausar música' : 'Reproducir música');
     }
 
-    tapHint.hidden = true;
+    function playAudio() {
+      audio.play().then(updateIcons).catch(() => { /* el navegador bloqueó el autoplay */ });
+    }
 
-  });
-
-  volumeSlider.addEventListener('input', (e) => {
-    audio.volume = parseFloat(e.target.value);
-  });
-
-  loopBtn.addEventListener('click', () => {
-    audio.loop = !audio.loop;
-    loopBtn.classList.toggle('ctrl-btn--active', audio.loop);
-  });
-
-  // Iniciar música al primer toque
-  if (musicConf.autoplayTrasInteraccion !== false) {
-
-    const startOnce = () => {
-
-      playAudio();
-
+    toggleBtn.addEventListener('click', () => {
+      if (audio.paused) playAudio(); else audio.pause();
+      updateIcons();
       tapHint.hidden = true;
-
-      if (controls) {
-        controls.classList.add('show');
-      }
-
-      document.removeEventListener('click', startOnce);
-      document.removeEventListener('touchstart', startOnce);
-
-    };
-
-    tapHint.addEventListener('click', startOnce);
-
-    document.addEventListener('click', startOnce, {
-      once: true
     });
 
-    document.addEventListener('touchstart', startOnce, {
-      once: true,
-      passive: true
+    volumeSlider.addEventListener('input', (e) => {
+      audio.volume = parseFloat(e.target.value);
     });
 
-  } else {
+    loopBtn.addEventListener('click', () => {
+      audio.loop = !audio.loop;
+      loopBtn.classList.toggle('ctrl-btn--active', audio.loop);
+    });
 
-    tapHint.hidden = true;
-
-    if (controls) {
-      controls.classList.add('show');
+    // Cumplimiento de políticas de autoplay: iniciar solo tras interacción
+    if (musicConf.autoplayTrasInteraccion !== false) {
+      const startOnce = () => {
+        playAudio();
+        tapHint.hidden = true;
+        document.removeEventListener('click', startOnce);
+        document.removeEventListener('touchstart', startOnce);
+      };
+      tapHint.addEventListener('click', startOnce);
+      document.addEventListener('click', startOnce, { once: true });
+      document.addEventListener('touchstart', startOnce, { once: true, passive: true });
+    } else {
+      tapHint.hidden = true;
     }
-
   }
-
-}
-
-    
 
   /* ---------------------------------------------------------------- */
   /* 5. COMPARTIR                                                       */
@@ -371,7 +308,13 @@ function setupMusic() {
       }
     });
 
-    // Web Share API nativa en móviles, si está disponible, mediante el mismo botón principal (long usage keeps menu too)
+    document.getElementById('share-qr').addEventListener('click', () => openQrModal(url));
+
+    document.getElementById('qr-close').addEventListener('click', () => {
+      document.getElementById('qr-modal').hidden = true;
+    });
+
+    // Web Share API nativa en móviles, si está disponible, mediante el mismo botón principal
     if (navigator.share) {
       shareToggle.addEventListener('dblclick', () => {
         navigator.share({ title: titulo, text: share.descripcion, url }).catch(() => {});
@@ -383,6 +326,27 @@ function setupMusic() {
     const original = btn.textContent;
     btn.textContent = text;
     setTimeout(() => { btn.textContent = original; }, 1800);
+  }
+
+  function openQrModal(url) {
+    const modal = document.getElementById('qr-modal');
+    const qrContainer = document.getElementById('qr-code');
+    qrContainer.innerHTML = '';
+    modal.hidden = false;
+
+    const render = () => {
+      // eslint-disable-next-line no-undef
+      new QRCode(qrContainer, { text: url, width: 200, height: 200, colorDark: '#0a1128', colorLight: '#f7f3ea' });
+    };
+
+    if (window.QRCode) {
+      render();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      script.onload = render;
+      document.body.appendChild(script);
+    }
   }
 
   /* ---------------------------------------------------------------- */

@@ -14,13 +14,21 @@
   },
   "estudiantes": {
     "activo": true,
-    "nombres": [
-      "María José",
-      "Juan Pablo",
-      "Sofía",
-      "Samuel",
-      "Isabella",
-      "Mateo"
+    "nombres": ["Leonardo",
+    "Mauricio",
+    "Samuel",
+    "Juan",
+    "Lucas",
+    "Diego",
+    "Matías",
+    "Maximiliano",
+    "Victoria",
+    "Sofía",
+    "Zoe",
+    "Sara",
+    "Sarah",
+    "Elena",
+    "Ladis"
     ],
     "intervaloSegundos": 3.5
   },

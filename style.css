@@ -151,6 +151,18 @@ body { -webkit-font-smoothing: antialiased; }
   50% { opacity: 0.7; transform: translateX(-50%) scale(1.08); }
 }
 
+.shield-real {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  width: 34%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 /* ===================== PANEL DE CUENTA REGRESIVA ===================== */
 .countdown-panel {
   position: absolute;

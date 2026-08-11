@@ -345,7 +345,7 @@
 
       fotos.forEach((src, idx) => {
         const slide = document.createElement('div');
-        slide.className = 'carousel-slide';
+        slide.className = 'carousel-slide' + (idx === 0 ? ' is-active' : '');
         const img = document.createElement('img');
         img.src = src;
         img.alt = `${etapa.titulo} — foto ${idx + 1}`;
@@ -363,12 +363,11 @@
       });
 
       slideIndex = 0;
-      updateTrackPosition();
+      updateDots();
       if (fotos.length > 1 && autoplayOn) startAutoplay();
     }
 
-    function updateTrackPosition() {
-      trackEl.style.transform = `translateX(-${slideIndex * 100}%)`;
+    function updateDots() {
       dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
         d.classList.toggle('carousel-dot--active', i === slideIndex);
       });
@@ -377,8 +376,24 @@
     function goToSlide(idx) {
       const { fotos } = currentFotos();
       if (fotos.length === 0) return;
-      slideIndex = (idx + fotos.length) % fotos.length;
-      updateTrackPosition();
+      const newIndex = (idx + fotos.length) % fotos.length;
+      if (newIndex === slideIndex) return;
+
+      const slides = trackEl.querySelectorAll('.carousel-slide');
+      const oldSlide = slides[slideIndex];
+      const newSlide = slides[newIndex];
+
+      if (oldSlide) {
+        oldSlide.classList.remove('is-active');
+        oldSlide.classList.add('is-leaving');
+        // Quita la clase de salida una vez terminó la animación, para que
+        // quede lista si vuelve a mostrarse más adelante.
+        setTimeout(() => oldSlide.classList.remove('is-leaving'), 950);
+      }
+      if (newSlide) newSlide.classList.add('is-active');
+
+      slideIndex = newIndex;
+      updateDots();
     }
     function nextSlide() { goToSlide(slideIndex + 1); }
     function prevSlide() { goToSlide(slideIndex - 1); }

@@ -2,7 +2,7 @@
    Cachea el "app shell" para que la página cargue instantáneamente
    y funcione, en gran parte, sin conexión. */
 
-const CACHE_NAME = 'transicion-2026-v2';
+const CACHE_NAME = 'transicion-2026-v3';
 // Solo el "app shell" que siempre existe. El audio y otros archivos opcionales
 // NO van aquí: cache.addAll() falla en bloque si un solo recurso da 404, lo
 // que dejaba la app completa sin caché offline si aún no se había subido la

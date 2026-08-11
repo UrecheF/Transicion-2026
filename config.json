@@ -59,6 +59,13 @@
     "pulsoEscudo": 1,
     "movimientoLaureles": 1,
     "velocidadNombres": 1
+  },
+  "imagenes": {
+    "fondo": "assets/images/bg-full.jpg",
+    "logo": "assets/images/logo-crop.png",
+    "favicon": "assets/icons/icon-192.png",
+    "ogImage": "assets/images/logo-crop.png"
+  },
   "galeria": {
     "activa": true,
     "titulo": "Nuestro Camino en Gimomo",

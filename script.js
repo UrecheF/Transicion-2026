@@ -373,6 +373,26 @@
       });
     }
 
+    function launchFlyingPhoto(imgEl) {
+      if (!imgEl) return;
+      const rect = imgEl.getBoundingClientRect();
+      const clone = document.createElement('img');
+      clone.src = imgEl.currentSrc || imgEl.src;
+      clone.alt = '';
+      clone.className = 'gallery-flying-photo';
+      clone.style.left = `${rect.left}px`;
+      clone.style.top = `${rect.top}px`;
+      clone.style.width = `${rect.width}px`;
+      clone.style.height = `${rect.height}px`;
+      document.body.appendChild(clone);
+      // fuerza reflow para que la transición se dispare al agregar la clase
+      void clone.offsetHeight;
+      requestAnimationFrame(() => clone.classList.add('is-flying'));
+      const cleanup = () => clone.remove();
+      clone.addEventListener('transitionend', cleanup, { once: true });
+      setTimeout(cleanup, 1700); // respaldo por si transitionend no dispara
+    }
+
     function goToSlide(idx) {
       const { fotos } = currentFotos();
       if (fotos.length === 0) return;
@@ -384,11 +404,12 @@
       const newSlide = slides[newIndex];
 
       if (oldSlide) {
+        launchFlyingPhoto(oldSlide.querySelector('img'));
+        // Oculta la foto original al instante (sin transición): la copia
+        // que vuela por la pantalla toma el relevo visualmente.
+        oldSlide.style.transition = 'none';
         oldSlide.classList.remove('is-active');
-        oldSlide.classList.add('is-leaving');
-        // Quita la clase de salida una vez terminó la animación, para que
-        // quede lista si vuelve a mostrarse más adelante.
-        setTimeout(() => oldSlide.classList.remove('is-leaving'), 950);
+        requestAnimationFrame(() => { oldSlide.style.transition = ''; });
       }
       if (newSlide) newSlide.classList.add('is-active');
 

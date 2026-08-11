@@ -19,6 +19,32 @@ assets/
   fonts/                → (opcional) fuentes locales si no quieres usar Google Fonts
 ```
 
+## 🖼️ Galería "Nuestro Camino en Gimomo" (Párvulo → Prejardín → Jardín → Transición)
+
+1. Coloca las fotos de cada etapa en su carpeta correspondiente, por ejemplo:
+   `assets/images/galeria/parvulo/foto1.jpg`
+2. En `config.json`, dentro de `galeria.etapas`, agrega las rutas en el arreglo
+   `fotos` de la etapa correspondiente:
+   ```json
+   { "id": "parvulo", "titulo": "Párvulo", "fotos": [
+       "assets/images/galeria/parvulo/foto1.jpg",
+       "assets/images/galeria/parvulo/foto2.jpg"
+   ]}
+   ```
+3. Al hacer scroll hasta esa sección, las fotos aparecen con una animación
+   suave y escalonada. Se puede tocar cualquier foto para verla en grande
+   (lightbox). Las pestañas permiten moverse entre Párvulo, Prejardín, Jardín
+   y Transición sin recargar la página.
+4. Si una etapa no tiene fotos aún, se muestra automáticamente un aviso
+   discreto en su lugar — no rompe el diseño.
+
+## 👧🧒 Nombres flotando desde el libro
+
+En `config.json`, dentro de `estudiantes.nombres`, reemplaza la lista de
+ejemplo por los nombres reales de los estudiantes de Transición 2026. Salen
+flotando uno a uno desde el libro abierto del póster, en orden aleatorio y en
+bucle continuo.
+
 ## ✏️ Cómo editar el contenido (sin tocar código)
 
 Todo se controla desde **`config.json`**:

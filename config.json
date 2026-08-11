@@ -10,29 +10,35 @@
     "lema": "Pequeños Pasos Hoy, Grandes Sueños Mañana",
     "fraseFinal": "Hoy aprendemos, mañana transformamos el mundo.",
     "mensajeCelebracion": "¡Llegó el gran día! Felicidades Transición 2026 🎓✨",
-    "valores": ["DISCIPLINA", "VALORES", "SUEÑOS", "FUTURO"]
+    "valores": [
+      "DISCIPLINA",
+      "VALORES",
+      "SUEÑOS",
+      "FUTURO"
+    ]
   },
   "estudiantes": {
     "activo": true,
     "nombres": [
-  "Mauricio",
-  "Leonardo",
-  "Jesús Alejandro",
-  "Matías",
-  "Sofia",
-  "María Teresa",
-  "Diego",
-  "Zoey",
-  "Sara Luna",
-  "Sarah Navarro",
-  "Elena",
-  "Samuel",
-  "Juan Sebastián",
-  "Lukas",
-  "Maximiliano",
-  "Victoria Torres",
-  "Victoria Ureche",
-  "Ladys"],
+      "Mauricio",
+      "Leonardo",
+      "Jesús Alejandro",
+      "Matías",
+      "Sofia",
+      "María Teresa",
+      "Diego",
+      "Zoey",
+      "Sara Luna",
+      "Sarah Navarro",
+      "Elena",
+      "Samuel",
+      "Juan Sebastián",
+      "Lukas",
+      "Maximiliano",
+      "Victoria Torres",
+      "Victoria Ureche",
+      "Ladys"
+    ],
     "intervaloSegundos": 5.5
   },
   "colores": {
@@ -59,6 +65,32 @@
     "logo": "assets/images/logo-crop.png",
     "favicon": "assets/icons/icon-192.png",
     "ogImage": "assets/images/logo-crop.png"
+  },
+  "galeria": {
+    "activa": true,
+    "titulo": "Nuestro Camino en Gimomo",
+    "etapas": [
+      {
+        "id": "parvulo",
+        "titulo": "Párvulo",
+        "fotos": []
+      },
+      {
+        "id": "prejardin",
+        "titulo": "Prejardín",
+        "fotos": []
+      },
+      {
+        "id": "jardin",
+        "titulo": "Jardín",
+        "fotos": []
+      },
+      {
+        "id": "transicion",
+        "titulo": "Transición",
+        "fotos": []
+      }
+    ]
   },
   "musica": {
     "archivo": "assets/audio/musica-fondo.mp3",

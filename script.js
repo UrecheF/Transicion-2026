@@ -260,7 +260,119 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 5. REPRODUCTOR DE MÚSICA                                          */
+  /* 5. GALERÍA POR ETAPAS (párvulo, prejardín, jardín, transición)    */
+  /* ---------------------------------------------------------------- */
+  function setupGallery() {
+    const conf = CONFIG?.galeria;
+    const section = document.getElementById('gallery-section');
+    if (!section) return;
+
+    const etapas = (conf?.etapas || []).filter((e) => e && e.id && e.titulo);
+    if (!conf || conf.activa === false || etapas.length === 0) {
+      section.hidden = true;
+      return;
+    }
+
+    const titleEl = document.getElementById('gallery-title');
+    const tabsEl = document.getElementById('gallery-tabs');
+    const gridEl = document.getElementById('gallery-grid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    if (conf.titulo) titleEl.textContent = conf.titulo;
+
+    let activeId = etapas[0].id;
+
+    function renderTabs() {
+      tabsEl.innerHTML = '';
+      etapas.forEach((etapa) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'gallery-tab' + (etapa.id === activeId ? ' gallery-tab--active' : '');
+        btn.textContent = etapa.titulo;
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', etapa.id === activeId ? 'true' : 'false');
+        btn.addEventListener('click', () => {
+          if (activeId === etapa.id) return;
+          activeId = etapa.id;
+          renderTabs();
+          renderGrid();
+        });
+        tabsEl.appendChild(btn);
+      });
+    }
+
+    function renderGrid() {
+      gridEl.innerHTML = '';
+      const etapa = etapas.find((e) => e.id === activeId);
+      const fotos = (etapa?.fotos || []).filter(Boolean);
+
+      if (fotos.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'gallery-empty';
+        empty.textContent = `Pronto verás aquí las fotos de ${etapa?.titulo || 'esta etapa'}.`;
+        gridEl.appendChild(empty);
+        return;
+      }
+
+      fotos.forEach((src, idx) => {
+        const img = document.createElement('img');
+        img.className = 'gallery-photo';
+        img.src = src;
+        img.alt = `${etapa.titulo} — foto ${idx + 1}`;
+        img.loading = 'lazy';
+        // Aparición escalonada: cada foto se revela un poco después que la anterior
+        img.style.transitionDelay = `${Math.min(idx, 14) * 0.05}s`;
+        img.addEventListener('click', () => openLightbox(src, img.alt));
+        gridEl.appendChild(img);
+      });
+
+      // Si la sección ya estaba visible al cambiar de pestaña, re-dispara la
+      // animación de entrada para las fotos nuevas (si no, forceReflow no haría falta).
+      if (section.classList.contains('is-visible')) {
+        requestAnimationFrame(() => {
+          gridEl.querySelectorAll('.gallery-photo').forEach((el) => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+          });
+        });
+      }
+    }
+
+    function openLightbox(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightbox.hidden = false;
+    }
+    function closeLightbox() {
+      lightbox.hidden = true;
+      lightboxImg.removeAttribute('src');
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
+    });
+
+    renderTabs();
+    renderGrid();
+
+    // Revelado animado la primera vez que la sección entra en pantalla al hacer scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          section.classList.add('is-visible');
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.15 });
+    observer.observe(section);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* 6. REPRODUCTOR DE MÚSICA                                          */
   /* ---------------------------------------------------------------- */
   function setupMusic() {
     const audio = document.getElementById('bg-audio');
@@ -321,7 +433,7 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 6. COMPARTIR                                                       */
+  /* 7. COMPARTIR                                                       */
   /* ---------------------------------------------------------------- */
   function setupShare() {
     const shareToggle = document.getElementById('share-toggle');
@@ -397,7 +509,7 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 7. INSTALACIÓN COMO APP (PWA)                                      */
+  /* 8. INSTALACIÓN COMO APP (PWA)                                      */
   /* ---------------------------------------------------------------- */
   function setupInstall() {
     const installBtn = document.getElementById('install-btn');
@@ -421,7 +533,7 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* 8. TEXTOS DINÁMICOS DESDE CONFIG (título/lema si se editan)       */
+  /* 9. TEXTOS DINÁMICOS DESDE CONFIG (título/lema si se editan)       */
   /* ---------------------------------------------------------------- */
   function applyTextContent() {
     if (!CONFIG?.evento) return;
@@ -441,6 +553,7 @@
     applyTextContent();
     initParticles();
     setupFloatingNames();
+    setupGallery();
     startCountdown();
     setupMusic();
     setupShare();

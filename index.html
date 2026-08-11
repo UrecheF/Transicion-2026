@@ -84,7 +84,23 @@
   <section class="gallery-section" id="gallery-section">
     <h2 class="gallery-title" id="gallery-title">Nuestro Camino en Gimomo</h2>
     <nav class="gallery-tabs" id="gallery-tabs" role="tablist" aria-label="Etapas escolares"></nav>
-    <div class="gallery-grid" id="gallery-grid"></div>
+
+    <div class="gallery-viewmode" id="gallery-viewmode">
+      <button type="button" class="viewmode-btn viewmode-btn--active" data-mode="carousel" id="btn-mode-carousel">🎠 Carrusel</button>
+      <button type="button" class="viewmode-btn" data-mode="grid" id="btn-mode-grid">🔲 Cuadrícula</button>
+    </div>
+
+    <div class="gallery-carousel" id="gallery-carousel">
+      <button type="button" class="carousel-arrow carousel-arrow--prev" id="carousel-prev" aria-label="Foto anterior">‹</button>
+      <div class="carousel-track-wrap" id="carousel-track-wrap">
+        <div class="carousel-track" id="carousel-track"></div>
+      </div>
+      <button type="button" class="carousel-arrow carousel-arrow--next" id="carousel-next" aria-label="Foto siguiente">›</button>
+      <button type="button" class="carousel-autoplay" id="carousel-autoplay" aria-label="Pausar reproducción automática">⏸</button>
+      <div class="carousel-dots" id="carousel-dots"></div>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid" hidden></div>
   </section>
 
   <!-- Visor de fotos ampliadas -->

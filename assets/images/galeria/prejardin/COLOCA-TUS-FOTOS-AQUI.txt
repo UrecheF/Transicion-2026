@@ -1,0 +1,8 @@
+Coloca aqui las fotos de la etapa "prejardin".
+
+Despues de subirlas a esta carpeta en GitHub, agrega sus nombres en
+config.json, dentro de galeria -> etapas -> fotos, por ejemplo:
+
+"assets/images/galeria/prejardin/foto1.jpg"
+
+Puedes borrar este archivo de texto cuando ya no lo necesites.

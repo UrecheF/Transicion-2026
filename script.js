@@ -280,10 +280,25 @@
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.getElementById('lightbox-close');
 
+    // Elementos del carrusel
+    const carouselEl = document.getElementById('gallery-carousel');
+    const trackEl = document.getElementById('carousel-track');
+    const dotsEl = document.getElementById('carousel-dots');
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+    const autoplayBtn = document.getElementById('carousel-autoplay');
+    const btnModeCarousel = document.getElementById('btn-mode-carousel');
+    const btnModeGrid = document.getElementById('btn-mode-grid');
+
     if (conf.titulo) titleEl.textContent = conf.titulo;
 
     let activeId = etapas[0].id;
+    let viewMode = 'carousel'; // 'carousel' | 'grid'
+    let slideIndex = 0;
+    let autoplayTimer = null;
+    let autoplayOn = true;
 
+    /* ---------- Pestañas de etapa (párvulo, prejardín...) ---------- */
     function renderTabs() {
       tabsEl.innerHTML = '';
       etapas.forEach((etapa) => {
@@ -296,17 +311,130 @@
         btn.addEventListener('click', () => {
           if (activeId === etapa.id) return;
           activeId = etapa.id;
+          slideIndex = 0;
           renderTabs();
-          renderGrid();
+          renderCurrentView();
         });
         tabsEl.appendChild(btn);
       });
     }
 
+    function currentFotos() {
+      const etapa = etapas.find((e) => e.id === activeId);
+      return { etapa, fotos: (etapa?.fotos || []).filter(Boolean) };
+    }
+
+    /* ---------- Carrusel ---------- */
+    function renderCarousel() {
+      const { etapa, fotos } = currentFotos();
+      trackEl.innerHTML = '';
+      dotsEl.innerHTML = '';
+      stopAutoplay();
+
+      if (fotos.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'gallery-empty';
+        empty.textContent = `Pronto verás aquí las fotos de ${etapa?.titulo || 'esta etapa'}.`;
+        trackEl.appendChild(empty);
+        prevBtn.hidden = nextBtn.hidden = autoplayBtn.hidden = true;
+        return;
+      }
+
+      prevBtn.hidden = nextBtn.hidden = fotos.length <= 1;
+      autoplayBtn.hidden = fotos.length <= 1;
+
+      fotos.forEach((src, idx) => {
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `${etapa.titulo} — foto ${idx + 1}`;
+        img.loading = idx === 0 ? 'eager' : 'lazy';
+        img.addEventListener('click', () => openLightbox(src, img.alt));
+        slide.appendChild(img);
+        trackEl.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel-dot' + (idx === 0 ? ' carousel-dot--active' : '');
+        dot.setAttribute('aria-label', `Ir a foto ${idx + 1}`);
+        dot.addEventListener('click', () => goToSlide(idx));
+        dotsEl.appendChild(dot);
+      });
+
+      slideIndex = 0;
+      updateTrackPosition();
+      if (fotos.length > 1 && autoplayOn) startAutoplay();
+    }
+
+    function updateTrackPosition() {
+      trackEl.style.transform = `translateX(-${slideIndex * 100}%)`;
+      dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
+        d.classList.toggle('carousel-dot--active', i === slideIndex);
+      });
+    }
+
+    function goToSlide(idx) {
+      const { fotos } = currentFotos();
+      if (fotos.length === 0) return;
+      slideIndex = (idx + fotos.length) % fotos.length;
+      updateTrackPosition();
+    }
+    function nextSlide() { goToSlide(slideIndex + 1); }
+    function prevSlide() { goToSlide(slideIndex - 1); }
+
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayTimer = setInterval(nextSlide, 4500);
+    }
+    function stopAutoplay() {
+      if (autoplayTimer) clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+
+    prevBtn.addEventListener('click', () => { prevSlide(); if (autoplayOn) startAutoplay(); });
+    nextBtn.addEventListener('click', () => { nextSlide(); if (autoplayOn) startAutoplay(); });
+    autoplayBtn.addEventListener('click', () => {
+      autoplayOn = !autoplayOn;
+      autoplayBtn.textContent = autoplayOn ? '⏸' : '▶';
+      autoplayBtn.setAttribute('aria-label', autoplayOn ? 'Pausar reproducción automática' : 'Reanudar reproducción automática');
+      if (autoplayOn) startAutoplay(); else stopAutoplay();
+    });
+
+    // Deslizar con el dedo (swipe) en móviles
+    let touchStartX = 0, touchDeltaX = 0, touching = false;
+    const wrapEl = document.getElementById('carousel-track-wrap');
+    wrapEl.addEventListener('touchstart', (e) => {
+      touching = true;
+      touchStartX = e.touches[0].clientX;
+      touchDeltaX = 0;
+      stopAutoplay();
+    }, { passive: true });
+    wrapEl.addEventListener('touchmove', (e) => {
+      if (!touching) return;
+      touchDeltaX = e.touches[0].clientX - touchStartX;
+    }, { passive: true });
+    wrapEl.addEventListener('touchend', () => {
+      if (!touching) return;
+      touching = false;
+      if (Math.abs(touchDeltaX) > 40) {
+        if (touchDeltaX < 0) nextSlide(); else prevSlide();
+      }
+      if (autoplayOn) startAutoplay();
+    });
+
+    // Flechas del teclado cuando el carrusel está visible
+    document.addEventListener('keydown', (e) => {
+      if (viewMode !== 'carousel' || carouselEl.hidden) return;
+      if (!lightbox.hidden) return;
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    /* ---------- Cuadrícula (modo alternativo) ---------- */
     function renderGrid() {
       gridEl.innerHTML = '';
-      const etapa = etapas.find((e) => e.id === activeId);
-      const fotos = (etapa?.fotos || []).filter(Boolean);
+      const { etapa, fotos } = currentFotos();
 
       if (fotos.length === 0) {
         const empty = document.createElement('p');
@@ -322,14 +450,11 @@
         img.src = src;
         img.alt = `${etapa.titulo} — foto ${idx + 1}`;
         img.loading = 'lazy';
-        // Aparición escalonada: cada foto se revela un poco después que la anterior
         img.style.transitionDelay = `${Math.min(idx, 14) * 0.05}s`;
         img.addEventListener('click', () => openLightbox(src, img.alt));
         gridEl.appendChild(img);
       });
 
-      // Si la sección ya estaba visible al cambiar de pestaña, re-dispara la
-      // animación de entrada para las fotos nuevas (si no, forceReflow no haría falta).
       if (section.classList.contains('is-visible')) {
         requestAnimationFrame(() => {
           gridEl.querySelectorAll('.gallery-photo').forEach((el) => {
@@ -340,14 +465,46 @@
       }
     }
 
+    /* ---------- Alternar entre carrusel y cuadrícula ---------- */
+    function renderCurrentView() {
+      if (viewMode === 'carousel') {
+        carouselEl.hidden = false;
+        gridEl.hidden = true;
+        renderCarousel();
+      } else {
+        carouselEl.hidden = true;
+        gridEl.hidden = false;
+        stopAutoplay();
+        renderGrid();
+      }
+    }
+
+    btnModeCarousel.addEventListener('click', () => {
+      if (viewMode === 'carousel') return;
+      viewMode = 'carousel';
+      btnModeCarousel.classList.add('viewmode-btn--active');
+      btnModeGrid.classList.remove('viewmode-btn--active');
+      renderCurrentView();
+    });
+    btnModeGrid.addEventListener('click', () => {
+      if (viewMode === 'grid') return;
+      viewMode = 'grid';
+      btnModeGrid.classList.add('viewmode-btn--active');
+      btnModeCarousel.classList.remove('viewmode-btn--active');
+      renderCurrentView();
+    });
+
+    /* ---------- Lightbox (zoom de una foto) ---------- */
     function openLightbox(src, alt) {
       lightboxImg.src = src;
       lightboxImg.alt = alt;
       lightbox.hidden = false;
+      if (viewMode === 'carousel') stopAutoplay();
     }
     function closeLightbox() {
       lightbox.hidden = true;
       lightboxImg.removeAttribute('src');
+      if (viewMode === 'carousel' && autoplayOn) startAutoplay();
     }
 
     lightboxClose.addEventListener('click', closeLightbox);
@@ -357,7 +514,7 @@
     });
 
     renderTabs();
-    renderGrid();
+    renderCurrentView();
 
     // Revelado animado la primera vez que la sección entra en pantalla al hacer scroll
     const observer = new IntersectionObserver((entries) => {

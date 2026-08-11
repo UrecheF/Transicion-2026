@@ -393,20 +393,30 @@ body { -webkit-font-smoothing: antialiased; }
   position: absolute;
   inset: 0;
   opacity: 0;
-  transform: translateY(0);
-  transition: opacity .9s ease, transform .9s ease;
   pointer-events: none;
 }
 .carousel-slide.is-active {
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
   z-index: 2;
 }
-.carousel-slide.is-leaving {
+
+/* Copia que vuela por toda la página al cambiar de foto */
+.gallery-flying-photo {
+  position: fixed;
+  z-index: 70;
+  pointer-events: none;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform 1.5s cubic-bezier(.22,.61,.36,1), opacity 1.5s ease;
+  will-change: transform, opacity;
+}
+.gallery-flying-photo.is-flying {
+  transform: translateY(-115vh) scale(0.8);
   opacity: 0;
-  transform: translateY(-48px);
-  z-index: 1;
 }
 .carousel-slide img {
   width: 100%;

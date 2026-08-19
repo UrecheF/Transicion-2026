@@ -565,6 +565,123 @@
   }
 
   /* ---------------------------------------------------------------- */
+  /* 5.5 VIDEOS: MOMENTOS EN MOVIMIENTO                                 */
+  /* ---------------------------------------------------------------- */
+  function setupVideos() {
+    const conf = CONFIG?.videos;
+    const section = document.getElementById('videos-section');
+    if (!conf || !conf.activa || !section) {
+      if (section) section.hidden = true;
+      return;
+    }
+
+    const titleEl = document.getElementById('videos-title');
+    const subtitleEl = document.getElementById('videos-subtitle');
+    const gridEl = document.getElementById('videos-grid');
+    if (conf.titulo) titleEl.textContent = conf.titulo;
+    if (conf.subtitulo) subtitleEl.textContent = conf.subtitulo;
+
+    const archivos = (conf.archivos || []).filter((v) => v && v.src);
+    if (archivos.length === 0) {
+      gridEl.innerHTML = '<p class="videos-empty">Los videos se agregarán pronto ✨</p>';
+      return;
+    }
+
+    let currentlyPlaying = null;
+
+    archivos.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+
+      const inner = document.createElement('div');
+      inner.className = 'video-card-inner';
+
+      const glow = document.createElement('div');
+      glow.className = 'video-glow';
+      glow.setAttribute('aria-hidden', 'true');
+
+      const video = document.createElement('video');
+      video.className = 'video-el';
+      video.src = item.src;
+      video.preload = 'metadata';
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      video.muted = false;
+      video.controlsList = 'nodownload';
+
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'video-play-btn';
+      playBtn.setAttribute('aria-label', 'Reproducir video');
+      playBtn.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+
+      function startPlayback() {
+        // Pausa cualquier otro video que esté sonando, para que solo uno suene a la vez
+        if (currentlyPlaying && currentlyPlaying !== video) {
+          currentlyPlaying.pause();
+        }
+        video.controls = true;
+        inner.classList.add('is-playing');
+        playBtn.hidden = true;
+        video.play().catch(() => {});
+        currentlyPlaying = video;
+      }
+
+      playBtn.addEventListener('click', startPlayback);
+      video.addEventListener('play', () => {
+        inner.classList.add('is-playing');
+        playBtn.hidden = true;
+        currentlyPlaying = video;
+      });
+      video.addEventListener('pause', () => {
+        // Si lo pausan (no al terminar), mantenemos los controles nativos visibles
+      });
+      video.addEventListener('ended', () => {
+        inner.classList.remove('is-playing');
+        video.controls = false;
+        playBtn.hidden = false;
+      });
+
+      inner.appendChild(video);
+      inner.appendChild(glow);
+      inner.appendChild(playBtn);
+      card.appendChild(inner);
+
+      if (item.titulo) {
+        const caption = document.createElement('p');
+        caption.className = 'video-caption';
+        caption.textContent = item.titulo;
+        card.appendChild(caption);
+      }
+
+      gridEl.appendChild(card);
+
+      // Revelado escalonado al entrar en pantalla (cada video con su propio delay)
+      const cardObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => card.classList.add('is-revealed'), i * 90);
+            cardObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      cardObserver.observe(card);
+    });
+
+    // Revelado del título/subtítulo de la sección
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          section.classList.add('is-visible');
+          sectionObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.1 });
+    sectionObserver.observe(section);
+  }
+
+  /* ---------------------------------------------------------------- */
   /* 6. REPRODUCTOR DE MÚSICA                                          */
   /* ---------------------------------------------------------------- */
   function setupMusic() {
@@ -747,6 +864,7 @@
     initParticles();
     setupFloatingNames();
     setupGallery();
+    setupVideos();
     startCountdown();
     setupMusic();
     setupShare();
